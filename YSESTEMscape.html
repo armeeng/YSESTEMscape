@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Escape Room - Youth for STEM Equity</title>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #254151 0%, #45B29D 100%);
+            color: white;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(37, 65, 81, 0.2);
+        }
+
+        .header h1 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .cta {
+            background: #F4CE50;
+            color: #254151;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(244, 206, 80, 0.4);
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 206, 80, 0.6);
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 2px solid #f0f0f0;
+        }
+
+        .level-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .level-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #8C8C8B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .level-dot.active {
+            background: #45B29D;
+            transform: scale(1.2);
+            box-shadow: 0 5px 15px rgba(69, 178, 157, 0.4);
+        }
+
+        .level-dot.completed {
+            background: #F4CE50;
+            color: #254151;
+        }
+
+        .puzzle-container {
+            text-align: center;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .puzzle-title {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 2rem;
+            color: #254151;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .puzzle-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .input-area {
+            margin: 20px 0;
+        }
+
+        .answer-input {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 300px;
+            max-width: 100%;
+            text-align: center;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #45B29D;
+            box-shadow: 0 0 10px rgba(69, 178, 157, 0.2);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #45B29D, #254151);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(69, 178, 157, 0.4);
+        }
+
+        .hint-btn {
+            background: #F4CE50;
+            color: #254151;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .hint-btn:hover {
+            background: #f0c040;
+            transform: translateY(-1px);
+        }
+
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback.success {
+            background: rgba(69, 178, 157, 0.1);
+            color: #45B29D;
+            border: 2px solid #45B29D;
+        }
+
+        .feedback.error {
+            background: rgba(213, 83, 66, 0.1);
+            color: #D55342;
+            border: 2px solid #D55342;
+        }
+
+        .puzzle-visual {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #45B29D;
+        }
+
+        .circuit-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .circuit-element {
+            width: 60px;
+            height: 40px;
+            background: #254151;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .circuit-element.battery {
+            background: #D55342;
+        }
+
+        .circuit-element.resistor {
+            background: #F4CE50;
+            color: #254151;
+        }
+
+        .wire {
+            width: 40px;
+            height: 4px;
+            background: #8C8C8B;
+            border-radius: 2px;
+        }
+
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .grid-cell {
+            width: 80px;
+            height: 80px;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #254151;
+            transition: all 0.3s ease;
+        }
+
+        .grid-cell.highlight {
+            background: #45B29D;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .completion-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .completion-screen h2 {
+            font-family: 'League Spartan', sans-serif;
+            font-size: 2.5rem;
+            color: #254151;
+            margin-bottom: 20px;
+        }
+
+        .completion-screen p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #F4CE50, #45B29D);
+            color: #254151;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 206, 80, 0.4);
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(37, 65, 81, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #45B29D, #F4CE50);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .puzzle-title { font-size: 1.5rem; }
+            .answer-input { width: 100%; }
+            .circuit-diagram { flex-direction: column; }
+            .timer { position: static; margin-bottom: 20px; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">Time: 00:00</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>STEM Escape Room Adventure</h1>
+            <p>Youth for STEM Equity presents:</p>
+            <div class="cta">UNLOCK CURIOSITY, ESCAPE STEM INEQUITY</div>
+        </div>
+
+        <div class="level-indicator">
+            <div class="level-dot active" id="level1">1</div>
+            <div class="level-dot" id="level2">2</div>
+            <div class="level-dot" id="level3">3</div>
+            <div class="level-dot" id="level4">4</div>
+            <div class="level-dot" id="level5">5</div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="game-area">
+            <!-- Level 1: Math Challenge -->
+            <div class="puzzle-container" id="puzzle1">
+                <h2 class="puzzle-title">🔢 Mathematics Laboratory</h2>
+                <p class="puzzle-description">
+                    Welcome to the first lab! Solve this pattern to unlock the next room.
+                    <br>Look at the sequence and find the missing number:
+                </p>
+                <div class="math-grid">
+                    <div class="grid-cell">2</div>
+                    <div class="grid-cell">4</div>
+                    <div class="grid-cell">8</div>
+                    <div class="grid-cell">3</div>
+                    <div class="grid-cell">9</div>
+                    <div class="grid-cell">27</div>
+                    <div class="grid-cell">4</div>
+                    <div class="grid-cell">16</div>
+                    <div class="grid-cell highlight">?</div>
+                </div>
+                <div class="input-area">
+                    <input type="number" class="answer-input" id="answer1" placeholder="Enter the missing number">
+                    <br>
+                    <button class="submit-btn" onclick="checkAnswer(1)">Submit Answer</button>
+                    <button class="hint-btn" onclick="showHint(1)">Need a Hint?</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <!-- Level 2: Science Challenge -->
+            <div class="puzzle-container hidden" id="puzzle2">
+                <h2 class="puzzle-title">🧪 Chemistry Laboratory</h2>
+                <p class="puzzle-description">
+                    Great work! Now you're in the chemistry lab. 
+                    <br>Balance this chemical equation by finding the coefficient for H₂O:
+                    <br><strong>C₃H₈ + 5O₂ → 3CO₂ + ?H₂O</strong>
+                </p>
+                <div class="puzzle-visual">
+                    <div style="font-size: 1.5rem; font-weight: 600; color: #254151;">
+                        C₃H₈ + 5O₂ → 3CO₂ + <span style="background: #F4CE50; padding: 5px 10px; border-radius: 5px;">?</span>H₂O
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="number" class="answer-input" id="answer2" placeholder="Enter the coefficient">
+                    <br>
+                    <button class="submit-btn" onclick="checkAnswer(2)">Submit Answer</button>
+                    <button class="hint-btn" onclick="showHint(2)">Need a Hint?</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <!-- Level 3: Technology Challenge -->
+            <div class="puzzle-container hidden" id="puzzle3">
+                <h2 class="puzzle-title">💻 Computer Science Lab</h2>
+                <p class="puzzle-description">
+                    Excellent! You've reached the tech lab. 
+                    <br>Debug this simple code: What number should replace the ? to make the output equal 15?
+                    <br><code>result = 3 * ? + 2</code>
+                </p>
+                <div class="puzzle-visual">
+                    <div style="background: #254151; color: white; padding: 20px; border-radius: 10px; font-family: monospace; font-size: 1.2rem;">
+                        input_value = ?<br>
+                        result = 3 * input_value + 2<br>
+                        print(result)  # Should output: 15
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="number" class="answer-input" id="answer3" placeholder="Enter the missing value">
+                    <br>
+                    <button class="submit-btn" onclick="checkAnswer(3)">Submit Answer</button>
+                    <button class="hint-btn" onclick="showHint(3)">Need a Hint?</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <!-- Level 4: Engineering Challenge -->
+            <div class="puzzle-container hidden" id="puzzle4">
+                <h2 class="puzzle-title">⚡ Engineering Laboratory</h2>
+                <p class="puzzle-description">
+                    Amazing progress! In this engineering challenge, calculate the total resistance.
+                    <br>Three resistors in series: 10Ω, 20Ω, and 30Ω. What's the total resistance?
+                </p>
+                <div class="circuit-diagram">
+                    <div class="circuit-element battery">9V</div>
+                    <div class="wire"></div>
+                    <div class="circuit-element resistor">10Ω</div>
+                    <div class="wire"></div>
+                    <div class="circuit-element resistor">20Ω</div>
+                    <div class="wire"></div>
+                    <div class="circuit-element resistor">30Ω</div>
+                    <div class="wire"></div>
+                </div>
+                <div class="input-area">
+                    <input type="number" class="answer-input" id="answer4" placeholder="Total resistance (Ω)">
+                    <br>
+                    <button class="submit-btn" onclick="checkAnswer(4)">Submit Answer</button>
+                    <button class="hint-btn" onclick="showHint(4)">Need a Hint?</button>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+            </div>
+
+            <!-- Level 5: Final Challenge -->
+            <div class="puzzle-container hidden" id="puzzle5">
+                <h2 class="puzzle-title">🌟 Final Challenge</h2>
+                <p class="puzzle-description">
+                    You're almost free! This final puzzle combines all STEM fields.
+                    <br>A bacteria population doubles every hour. If you start with 5 bacteria, 
+                    <br>how many bacteria will you have after 4 hours?
+                </p>
+                <div class="puzzle-visual">
+                    <div style="font-size: 1.2rem; color: #254151; line-height: 2;">
+                        Hour 0: 5 bacteria<br>
+                        Hour 1: 5 × 2 = 10 bacteria<br>
+                        Hour 2: 10 × 2 = 20 bacteria<br>
+                        Hour 3: 20 × 2 = 40 bacteria<br>
+                        Hour 4: ? bacteria
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="number" class="answer-input" id="answer5" placeholder="Number of bacteria">
+                    <br>
+                    <button class="submit-btn" onclick="checkAnswer(5)">Submit Answer</button>
+                    <button class="hint-btn" onclick="showHint(5)">Need a Hint?</button>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+            </div>
+
+            <!-- Completion Screen -->
+            <div class="completion-screen hidden" id="completion">
+                <h2>🎉 Congratulations!</h2>
+                <p>
+                    You've successfully escaped the STEM laboratory! You've demonstrated excellent problem-solving skills 
+                    across Mathematics, Science, Technology, and Engineering. 
+                    <br><br>
+                    <strong>Youth for STEM Equity</strong> believes in your potential to change the world through STEM!
+                    <br><br>
+                    <em>"Striving To Empower Minds"</em>
+                </p>
+                <button class="restart-btn" onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let startTime = Date.now();
+        let timerInterval;
+
+        // Correct answers for each level
+        const answers = {
+            1: 64,  // 4^3 = 64 (pattern: n^n)
+            2: 4,   // Balanced equation: C₃H₈ + 5O₂ → 3CO₂ + 4H₂O
+            3: 4.33, // 3 * 4.33 + 2 ≈ 15 (accept 4 or 4.33)
+            4: 60,  // 10 + 20 + 30 = 60Ω (series resistance)
+            5: 80   // 5 * 2^4 = 80 bacteria
+        };
+
+        // Hints for each level
+        const hints = {
+            1: "Look at the pattern: 2¹=2, 2²=4, 2³=8, then 3¹=3, 3²=9, 3³=27, so 4¹=4, 4²=16, 4³=?",
+            2: "Count the hydrogen atoms on both sides. Propane (C₃H₈) has 8 hydrogens, so you need 4 water molecules to balance.",
+            3: "Work backwards: if result = 15, then 15 = 3 * ? + 2, so 13 = 3 * ?, so ? = 13/3 ≈ 4.33",
+            4: "In a series circuit, total resistance = R₁ + R₂ + R₃. Simply add all the resistance values!",
+            5: "Use the exponential growth formula: Final = Initial × 2^(time). So 5 × 2⁴ = 5 × 16 = 80"
+        };
+
+        // Start timer
+        function startTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const progress = ((currentLevel - 1) / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function checkAnswer(level) {
+            const userAnswer = parseFloat(document.getElementById(`answer${level}`).value);
+            const correctAnswer = answers[level];
+            const feedback = document.getElementById(`feedback${level}`);
+            
+            // Special handling for level 3 (accept both 4 and 4.33)
+            let isCorrect = false;
+            if (level === 3) {
+                isCorrect = Math.abs(userAnswer - 4.33) < 0.1 || userAnswer === 4;
+            } else {
+                isCorrect = userAnswer === correctAnswer;
+            }
+            
+            if (isCorrect) {
+                feedback.textContent = "🎉 Correct! Moving to the next challenge...";
+                feedback.className = "feedback success show";
+                
+                // Mark level as completed
+                document.getElementById(`level${level}`).classList.add('completed');
+                
+                setTimeout(() => {
+                    nextLevel();
+                }, 1500);
+            } else {
+                feedback.textContent = "❌ Not quite right. Try again or use a hint!";
+                feedback.className = "feedback error show";
+                
+                // Clear feedback after 3 seconds
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function showHint(level) {
+            const feedback = document.getElementById(`feedback${level}`);
+            feedback.textContent = `💡 Hint: ${hints[level]}`;
+            feedback.className = "feedback show";
+            feedback.style.background = "rgba(244, 206, 80, 0.1)";
+            feedback.style.color = "#254151";
+            feedback.style.border = "2px solid #F4CE50";
+        }
+
+        function nextLevel() {
+            // Hide current puzzle
+            document.getElementById(`puzzle${currentLevel}`).classList.add('hidden');
+            
+            currentLevel++;
+            updateProgress();
+            
+            if (currentLevel <= 5) {
+                // Show next puzzle
+                document.getElementById(`puzzle${currentLevel}`).classList.remove('hidden');
+                
+                // Update level indicator
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`level${i}`).classList.remove('active');
+                }
+                document.getElementById(`level${currentLevel}`).classList.add('active');
+            } else {
+                // Show completion screen
+                document.getElementById('completion').classList.remove('hidden');
+                clearInterval(timerInterval);
+                updateProgress(); // Set to 100%
+            }
+        }
+
+        function restartGame() {
+            currentLevel = 1;
+            startTime = Date.now();
+            
+            // Reset all elements
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`puzzle${i}`).classList.add('hidden');
+                document.getElementById(`level${i}`).classList.remove('completed', 'active');
+                document.getElementById(`answer${i}`).value = '';
+                document.getElementById(`feedback${i}`).classList.remove('show');
+            }
+            
+            // Show first puzzle
+            document.getElementById('puzzle1').classList.remove('hidden');
+            document.getElementById('level1').classList.add('active');
+            document.getElementById('completion').classList.add('hidden');
+            
+            updateProgress();
+            startTimer();
+        }
+
+        // Initialize game
+        startTimer();
+        updateProgress();
+
+        // Add some interactive effects
+        document.querySelectorAll('.answer-input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const level = parseInt(this.id.replace('answer', ''));
+                    checkAnswer(level);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
